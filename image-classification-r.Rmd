@@ -1,0 +1,74 @@
+---
+title: "Basic Image Classification with TensorFlow"
+subtitle: "R Sample Code"
+output: pdf_document
+geometry: margin=2cm
+fontsize: 12pt
+---
+
+## Libraries
+
+Load TensorFlow and Keras libraries.
+\
+```{r}
+library(tensorflow)
+library(keras)
+```
+
+## Dataset
+
+Load the MNIST dataset and scale the pixel values to the range of [0,1].
+\
+```{r}
+c(c(x_train, y_train), c(x_test, y_test)) %<-% keras::dataset_mnist()
+x_train <- x_train / 255
+x_test <-  x_test / 255
+```
+
+## Artificial Neural Network Model
+
+Define a fully-connected feedforward artificial neural network architecture with a single hidden layer composed of 128 neurons. Set the dropout rate at 20%.
+\
+```{r}
+model <- keras_model_sequential(input_shape = c(28, 28)) %>%
+  layer_flatten() %>%
+  layer_dense(128, activation = "relu") %>%
+  layer_dropout(0.2) %>%
+  layer_dense(10)
+```
+\
+Define the loss function, the optimizer, and the evaluation metric for the training.
+\
+```{r}
+loss_fn <- loss_sparse_categorical_crossentropy(from_logits = TRUE)
+```
+\
+```{r}
+model %>% compile(
+  optimizer = "adam",
+  loss = loss_fn,
+  metrics = "accuracy"
+)
+```
+
+## Model Training and Evaluation
+
+Fit the model on the training set.
+\
+```{r}
+model %>% fit(x_train, y_train, epochs = 5)
+```
+\
+Evaluate the classification performance of the model on the test set.
+\
+```{r}
+model %>% evaluate(x_test,  y_test, verbose = 2)
+```
+
+
+
+
+
+
+
+
