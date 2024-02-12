@@ -1,0 +1,65 @@
+---
+title: "Basic Image Classification with TensorFlow"
+subtitle: "Python Sample Code"
+output: pdf_document
+geometry: margin=2cm
+fontsize: 12pt
+---
+
+## Libraries
+
+Load the TensorFlow library.
+\
+```{python}
+import tensorflow as tf
+```
+
+## Dataset
+
+Load the MNIST dataset and scale the pixel values to the range of [0,1].
+\
+```{python}
+mnist = tf.keras.datasets.mnist
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
+x_train, x_test = x_train / 255.0, x_test / 255.0
+```
+
+## Artificial Neural Network Model
+
+Define a fully-connected feedforward artificial neural network architecture with a single hidden layer composed of 128 neurons. Set the dropout rate at 20%.
+\
+```{python}
+model = tf.keras.models.Sequential([
+  tf.keras.layers.Flatten(input_shape=(28, 28)),
+  tf.keras.layers.Dense(128, activation='relu'),
+  tf.keras.layers.Dropout(0.2),
+  tf.keras.layers.Dense(10)
+])
+```
+\
+Define the loss function, the optimizer, and the evaluation metric for the training.
+\
+```{python}
+loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
+```
+\
+```{python}
+model.compile(optimizer='adam',
+              loss=loss_fn,
+              metrics=['accuracy'])
+```
+
+## Model Training and Evaluation
+
+Fit the model on the training set.
+\
+```{python}
+model.fit(x_train, y_train, epochs=5, verbose=2)
+```
+\
+Evaluate the classification performance of the model on the test set.
+\
+```{python}
+model.evaluate(x_test,  y_test, verbose=2)
+```
+
